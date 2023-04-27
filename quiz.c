@@ -94,7 +94,6 @@ int addAnswer(const char *mode, FILE *fp) {
         }
         int lenBuffer = strlen(buffer);
         buffer[lenBuffer+1] = '\0';
-        printf("Buffer: %s\n", buffer);
     }
 
     // Add results to Answers list
