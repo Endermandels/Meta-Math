@@ -9,13 +9,23 @@ TODO: Description
 #ifndef QUIZ
 #define QUIZ
 
-typedef struct ANSWERS {
-    char *answer;
-    int numAnswer;
-    struct ANSWERS *next;
-    struct ANSWERS *prev;
-} Answers;
+#define OPTIONCOUNT 4
 
+typedef struct OPTION {
+    char *answer;
+    char *goToTitle;
+}Option;
+
+typedef struct PROMPT {
+    char title[80];
+    char *description;
+    struct OPTION options[OPTIONCOUNT];
+    struct PROMPT *next;
+    struct PROMPT *prev;
+}Prompt;
+
+int loadPrompts();
 int beginGame();
+int quit();
 
 #endif

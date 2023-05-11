@@ -14,9 +14,13 @@ TODO: Description
 
 int main(int argc, char const *argv[])
 {
+    if (loadPrompts()) {
+        puts("Error occurred!");
+        exit(1);
+    }
     if (beginGame()) {
         puts("Error occurred!");
         exit(1);
     }
-    return 0;
+    return quit();
 }

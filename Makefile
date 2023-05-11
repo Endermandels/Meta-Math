@@ -11,6 +11,9 @@ ${EXEC}: ${OBJS}
 gcache: | ${GCACHE}
 	mv ${OBJS} ${EXEC} ${GCACHE}
 
+# $@ refers to the name of this command, ${GCACHE}
+# -p creates the directory if it doesn't exist
+#	and does not return an error if it does exist
 ${GCACHE}:
 	mkdir -p $@
 
