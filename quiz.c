@@ -14,7 +14,7 @@ NOTES:
 #include <stdlib.h>
 #include <string.h>
 #include "quiz.h"
-#define DEBUG 0
+#define DEBUG 1
 
 // Prompt Doubly Linked List
 Prompt *start = NULL;
@@ -26,7 +26,8 @@ void clearStream(FILE*);
 int loadPrompts();
 int loadPrompt();
 int beginGame();
-char *getTitleDesc(const char*);
+Prompt *getPrompt(const char*);
+int userInput(char*, FILE*);
 int quit();
 
 /*
@@ -66,7 +67,7 @@ Prompt* freePT(Prompt *pt) {
         }
     }
     Prompt *next = pt->next;
-    dputs("freeing rt...\n");
+    dputs("freeing pt...\n");
     free(pt);
     return next;
 }
@@ -82,6 +83,7 @@ void freePTDoublyLinkedList() {
 }
 
 int loadPrompts() {
+    // TODO: Implement File Reading
     Option introOpts[OPTIONCOUNT];
     introOpts[0].answer = "_";
     introOpts[0].goToTitle = "Q1";
@@ -92,79 +94,100 @@ int loadPrompts() {
 }
 
 int loadPrompt(char *title, char *description, Option options[OPTIONCOUNT]) {
-    Prompt *intro = (Prompt*)malloc(sizeof(Prompt));
-    if (!intro) {
+    Prompt *toLoad = (Prompt*)malloc(sizeof(Prompt));
+    if (!toLoad) {
         puts("!!! Failed to Allocate Memory !!!");
         return -1;
     }
-    intro->description = NULL;
-    intro->next = NULL;
-    intro->prev = NULL;
+    toLoad->description = NULL;
+    toLoad->next = NULL;
+    toLoad->prev = NULL;
 
     // Title
-    strncpy(intro->title, title, strlen(title)+1);
+    strncpy(toLoad->title, title, strlen(title)+1);
 
     // Description
-    intro->description = (char*)malloc(sizeof(char)*(strlen(description)+1));
-    if (!intro->description) {
+    toLoad->description = (char*)malloc(sizeof(char)*(strlen(description)+1));
+    if (!toLoad->description) {
         puts("!!! Failed to Allocate Memory !!!");
         return -1;
     }
-    strncpy(intro->description, description, strlen(description)+1);
+    strncpy(toLoad->description, description, strlen(description)+1);
 
     // Options
     for (int ii = 0; ii < OPTIONCOUNT; ii++){
-        intro->options[ii] = options[ii];
+        toLoad->options[ii] = options[ii];
     }
 
-    start = intro;
-    end = intro;
+    // Link to list
+    if (!start) {
+        start = toLoad;
+    } else {
+        end->next = toLoad;
+        toLoad->prev = end;
+    }
+    end = toLoad;
     return 0;
 }
 
 /*
 First run of game.
 Prompts are loaded in by this point.
+Loop through prompts starting at Intro.
 */
 int beginGame() {
-    char *desc = getTitleDesc("Intro");
-    if (desc) puts(desc);
+    // Prompt
+    Prompt *intro = getPrompt("Intro");
+    if (!intro) {
+        puts("!!! Prompt Not Found !!!");
+        return -1;
+    }
+    // Description
+    puts(intro->description);
+    // Answer
+    char answer[1000];
+    int testEOF = userInput(answer, stdin);
+    while (testEOF) {
+        puts("! Invalid Answer !");
+        testEOF = userInput(answer, stdin);
+    }
+    // Options
+
     return 0;
 }
 
 /*
 Loop through prompt DLL to find the prompt with matching title.
-Return title description (NULL if none found).
+Return prompt (NULL if none found).
 */
-char *getTitleDesc(const char *title) {
-    char *description = NULL;
+Prompt *getPrompt(const char *title) {
+    Prompt *match = NULL;
     Prompt *cur = start;
     while (cur) {
         if (!strcmp(cur->title, title)) {
             // found same title
-            description = cur->description;
+            match = cur;
         }
         cur = cur->next;
     }
-    return description;
+    return match;
 }
 
 /*
-Ask for input.
-Store valid input in Answers list.
+Receive user's input and copy it into dest.
+Return status.
 */
-int addAnswer(short isNumerical, FILE *fp) {
+int userInput(char *dest, FILE *fp) {
     // read in string
-    char buffer[100];
-    int testEOF = scanf("%99[^\n\r]s", buffer);
+    char buffer[1000];
+    int testEOF = scanf("%999[^\n\r]s", buffer);
+    clearStream(fp);
     if (testEOF <= 0) {
-        // Error
-        clearStream(fp);
-        return 1;
+        return -1;
     }
     int lenBuffer = strlen(buffer);
     buffer[lenBuffer+1] = '\0';
-
+    strncpy(dest, buffer, lenBuffer+1);
     return 0;
 }
 
