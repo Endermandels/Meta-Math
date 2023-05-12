@@ -16,11 +16,11 @@ int main(int argc, char const *argv[])
 {
     if (loadPrompts()) {
         puts("Error occurred!");
-        exit(1);
+        quit(1);
     }
     if (beginGame()) {
         puts("Error occurred!");
-        exit(1);
+        quit(1);
     }
-    return quit();
+    return quit(0);
 }

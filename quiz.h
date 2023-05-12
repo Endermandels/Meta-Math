@@ -26,6 +26,6 @@ typedef struct PROMPT {
 
 int loadPrompts();
 int beginGame();
-int quit();
+int quit(int);
 
 #endif
