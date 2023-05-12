@@ -12,13 +12,14 @@ TODO: Description
 #define OPTIONCOUNT 4
 
 typedef struct OPTION {
-    char *answer;
-    char *goToTitle;
+    char answer[50];
+    char goToTitle[80];
 }Option;
 
 typedef struct PROMPT {
     char title[80];
     char *description;
+    int optionsUsed;
     struct OPTION options[OPTIONCOUNT];
     struct PROMPT *next;
     struct PROMPT *prev;

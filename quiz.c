@@ -14,7 +14,7 @@ NOTES:
 #include <stdlib.h>
 #include <string.h>
 #include "quiz.h"
-#define DEBUG 1
+#define DEBUG 0
 
 // Prompt Doubly Linked List
 Prompt *start = NULL;
@@ -25,6 +25,9 @@ void dputs(const char*);
 void clearStream(FILE*);
 int loadPrompts();
 int loadPrompt();
+int parseLine();
+int parseOptions(char*, Option*);
+int parseOptionEquation(char*, Option*, int);
 int beginGame();
 Prompt *getPrompt(const char*);
 int userInput(char*, FILE*);
@@ -84,25 +87,48 @@ void freePTDoublyLinkedList() {
 
 int loadPrompts() {
     // TODO: Implement File Reading
-    // TODO: Implement Prompt String Parsing
-    Option introOpts[OPTIONCOUNT];
-    introOpts[0].answer = "_";
-    introOpts[0].goToTitle = "Q1";
-    char *title = "Intro";
-    char *desc = "Welcome to Meta Math Quiz.  This quiz will help you in your journey to learn how to do basic mathematical operations such as addition, subtraction, multiplication, division, raising to an exponent, taking a natural logarithm, taking a derivative, taking your sanity, taking an integral, and taking a square-root.  Fully simplify each of your answers, otherwise I will not accept your answers.  This course will be divided into three sections: Basic Math, Slightly Less Basic Math, and Basic Math for an Intelligent Computer Program.  Your results will be recorded.  Do NOT tamper with them.\n\nLet us get started.";
-    if (loadPrompt(title, desc, introOpts)) {
+
+    char *str = "Intro|Welcome to Meta Math Quiz.  This quiz will help you in your journey to learn how to do basic mathematical operations such as addition, subtraction, multiplication, division, raising to an exponent, taking a natural logarithm, taking a derivative, taking your sanity, taking an integral, and taking a square-root.  Fully simplify each of your answers, otherwise I will not accept your answers.  This course will be divided into three sections: Basic Math, Slightly Less Basic Math, and Basic Math for an Intelligent Computer Program.  Your results will be recorded.  Do NOT tamper with them.\n\nLet us begin.|_=Q1";
+    char *malStr = NULL;
+    malStr = (char*)malloc(sizeof(char)*(strlen(str)+1));
+    if (!malStr) {
+        puts("!!! Failed to Allocate Memory !!!");
         return -1;
     }
-    Option q1opts[OPTIONCOUNT];
-    q1opts[0].answer = "2";
-    q1opts[0].goToTitle = "Q2";
-    q1opts[1].answer = "_";
-    q1opts[1].goToTitle = "TryAgain";
-    char *title2 = "Q1";
-    char *desc2 = "\nWhat is 1+1?";
-    if (loadPrompt(title2, desc2, q1opts)) {
+    strncpy(malStr, str, strlen(str)+1);
+    if (parseLine(malStr)) {
+        free(malStr);
         return -1;
     }
+    free(malStr);
+
+    str = "Q1|What is 1+1?|2=Q2;_=TryAgain";
+    malStr = NULL;
+    malStr = (char*)malloc(sizeof(char)*(strlen(str)+1));
+    if (!malStr) {
+        puts("!!! Failed to Allocate Memory !!!");
+        return -1;
+    }
+    strncpy(malStr, str, strlen(str)+1);
+    if (parseLine(malStr)) {
+        free(malStr);
+        return -1;
+    }
+    free(malStr);
+
+    str = "Q2|What is 3+26?|29=Q3;_=TryAgain";
+    malStr = NULL;
+    malStr = (char*)malloc(sizeof(char)*(strlen(str)+1));
+    if (!malStr) {
+        puts("!!! Failed to Allocate Memory !!!");
+        return -1;
+    }
+    strncpy(malStr, str, strlen(str)+1);
+    if (parseLine(malStr)) {
+        free(malStr);
+        return -1;
+    }
+    free(malStr);
     return 0;
 }
 
@@ -130,6 +156,11 @@ int loadPrompt(char *title, char *description, Option options[OPTIONCOUNT]) {
     // Options
     for (int ii = 0; ii < OPTIONCOUNT; ii++){
         toLoad->options[ii] = options[ii];
+        if (!strcmp(options[ii].answer, "_")) {
+            // stop loading options
+            toLoad->optionsUsed = ii+1;
+            break;
+        }
     }
 
     // Link to list
@@ -140,6 +171,77 @@ int loadPrompt(char *title, char *description, Option options[OPTIONCOUNT]) {
         toLoad->prev = end;
     }
     end = toLoad;
+    return 0;
+}
+
+/*
+Take in a line (no newline at the end, NULL terminated).
+A line is all three pipe separated strings.
+Parse line into title, description and options.
+Checks that each line has the proper formatting.
+Load prompt.
+*/
+int parseLine(char *line) {
+    char title[80];
+    char *description;
+    Option options[OPTIONCOUNT];
+
+    const char *delim = "|";
+    char *token = strtok(line, delim);
+    int ii = 0;
+
+    while (token) {
+        if (ii == 0) {
+            // Title
+            int lenTok = strlen(token);
+            if (lenTok > 79) {
+                strncpy(title, token, 79);
+                title[79] = '\0';
+            } else {
+                strncpy(title, token, strlen(token)+1);
+            }
+        } else if (ii == 1) {
+            // Description
+            description = token;
+        } else if (ii == 2) {
+            // Options
+            // Parse token
+            if (parseOptions(token, options)) {
+                return -1;
+            }
+        }
+        // Retrieve next token
+        token = strtok(NULL, delim);
+        ii++;
+    }
+
+    if (loadPrompt(title, description, options)) {
+        return -1;
+    }
+    return 0;
+}
+
+int parseOptions(char *line, Option *options) {
+    // delimits set to ';' and '='
+    const char *delim = ";=";
+    char *token = strtok(line, delim);
+    int ii = 0;
+    
+    while (token) {
+        if (ii >= OPTIONCOUNT) {
+            puts("!! Too Many Options !!");
+            return -1;
+        }
+
+        // Answer
+        strncpy(options[ii].answer, token, strlen(token)+1);
+        token = strtok(NULL, delim);
+
+        // GoToTitle
+        strncpy(options[ii].goToTitle, token, strlen(token)+1);
+        token = strtok(NULL, delim);
+        ii++;
+    }
     return 0;
 }
 
@@ -169,7 +271,7 @@ int beginGame() {
                 testEOF = userInput(answer, stdin);
             }
             // Options
-            for (int ii = 0; ii < OPTIONCOUNT; ii++) {
+            for (int ii = 0; ii < cur->optionsUsed; ii++) {
                 if (!strcmp(cur->options[ii].answer, "_")) {
                     // End of options
                     strncpy(goToTitle, cur->options[ii].goToTitle, strlen(cur->options[ii].goToTitle)+1);
