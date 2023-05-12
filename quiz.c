@@ -19,13 +19,12 @@ NOTES:
 // Prompt Doubly Linked List
 Prompt *start = NULL;
 Prompt *end = NULL;
-int size = 0;
 
 void dputs(const char*);
 void clearStream(FILE*);
 int loadPrompts();
-int loadPrompt();
-int parseLine();
+int loadPrompt(char*, char*, Option*);
+int parseLine(char*);
 int parseOptions(char*, Option*);
 int parseOptionEquation(char*, Option*, int);
 int beginGame();
@@ -52,6 +51,23 @@ void clearStream(FILE *fp) {
         dputs("Clearing stream...");
         ch = fgetc(fp);
     }
+}
+
+/*
+Receive user's input and copy it into dest.
+*/
+int userInput(char *dest, FILE *fp) {
+    // read in string
+    char buffer[1000];
+    int testEOF = scanf("%999[^\n\r]s", buffer);
+    clearStream(fp);
+    if (testEOF <= 0) {
+        return -1;
+    }
+    int lenBuffer = strlen(buffer);
+    buffer[lenBuffer+1] = '\0';
+    strncpy(dest, buffer, lenBuffer+1);
+    return 0;
 }
 
 /*
@@ -85,6 +101,149 @@ void freePTDoublyLinkedList() {
     }
 }
 
+/*
+Loop through prompt DLL to find the prompt with matching title.
+
+@return matching prompt or NULL
+*/
+Prompt *getPrompt(const char *title) {
+    Prompt *match = NULL;
+    Prompt *cur = start;
+    while (cur) {
+        if (!strcmp(cur->title, title)) {
+            // found same title
+            match = cur;
+        }
+        cur = cur->next;
+    }
+    return match;
+}
+
+/*
+Append a prompt to the DLL given the title, description and options.
+*/
+int loadPrompt(char *title, char *description, Option *options) {
+    Prompt *toLoad = (Prompt*)malloc(sizeof(Prompt));
+    if (!toLoad) {
+        puts("!!! Failed to Allocate Memory !!!");
+        return -1;
+    }
+    toLoad->description = NULL;
+    toLoad->next = NULL;
+    toLoad->prev = NULL;
+
+    // Title
+    strncpy(toLoad->title, title, strlen(title)+1);
+
+    // Description
+    toLoad->description = (char*)malloc(sizeof(char)*(strlen(description)+1));
+    if (!toLoad->description) {
+        puts("!!! Failed to Allocate Memory !!!");
+        return -1;
+    }
+    strncpy(toLoad->description, description, strlen(description)+1);
+
+    // Options
+    for (int ii = 0; ii < OPTIONCOUNT; ii++){
+        toLoad->options[ii] = options[ii];
+        if (!strcmp(options[ii].answer, "_")) {
+            // stop loading options
+            toLoad->optionsUsed = ii+1;
+            break;
+        }
+    }
+
+    // Link to list
+    if (!start) {
+        start = toLoad;
+    } else {
+        end->next = toLoad;
+        toLoad->prev = end;
+    }
+    end = toLoad;
+    return 0;
+}
+
+/*
+Parse the third section of the CSV into answer and goToTitle pairs.
+
+@param  line Third section of the CSV.
+@param  options Structure to store answer and goToTitle pairs.
+*/
+int parseOptions(char *line, Option *options) {
+    // delimits set to ';' and '='
+    const char *delim = ";=";
+    char *token = strtok(line, delim);
+    int ii = 0;
+    
+    while (token) {
+        if (ii >= OPTIONCOUNT) {
+            puts("!! Too Many Options !!");
+            return -1;
+        }
+
+        // Answer
+        strncpy(options[ii].answer, token, strlen(token)+1);
+        token = strtok(NULL, delim);
+
+        // GoToTitle
+        strncpy(options[ii].goToTitle, token, strlen(token)+1);
+        token = strtok(NULL, delim);
+        ii++;
+    }
+    return 0;
+}
+
+/*
+Take in a line (no newline at the end, NULL terminated).
+A line is defined as all three pipe separated strings.
+Parse the line into title, description and options.
+Checks that each line has the proper formatting.
+Load prompt.
+*/
+int parseLine(char *line) {
+    char title[80];
+    char *description;
+    Option options[OPTIONCOUNT];
+
+    const char *delim = "|";
+    char *token = strtok(line, delim);
+    int ii = 0;
+
+    while (token && ii < 3) {
+        if (ii == 0) {
+            // Title
+            int lenTok = strlen(token);
+            if (lenTok > 79) {
+                strncpy(title, token, 79);
+                title[79] = '\0';
+            } else {
+                strncpy(title, token, strlen(token)+1);
+            }
+        } else if (ii == 1) {
+            // Description
+            description = token;
+        } else if (ii == 2) {
+            // Options
+            // Parse token
+            if (parseOptions(token, options)) {
+                return -1;
+            }
+        }
+        // Retrieve next token
+        token = strtok(NULL, delim);
+        ii++;
+    }
+
+    if (loadPrompt(title, description, options)) {
+        return -1;
+    }
+    return 0;
+}
+
+/*
+TODO: Description
+*/
 int loadPrompts() {
     // TODO: Implement File Reading
 
@@ -129,119 +288,6 @@ int loadPrompts() {
         return -1;
     }
     free(malStr);
-    return 0;
-}
-
-int loadPrompt(char *title, char *description, Option options[OPTIONCOUNT]) {
-    Prompt *toLoad = (Prompt*)malloc(sizeof(Prompt));
-    if (!toLoad) {
-        puts("!!! Failed to Allocate Memory !!!");
-        return -1;
-    }
-    toLoad->description = NULL;
-    toLoad->next = NULL;
-    toLoad->prev = NULL;
-
-    // Title
-    strncpy(toLoad->title, title, strlen(title)+1);
-
-    // Description
-    toLoad->description = (char*)malloc(sizeof(char)*(strlen(description)+1));
-    if (!toLoad->description) {
-        puts("!!! Failed to Allocate Memory !!!");
-        return -1;
-    }
-    strncpy(toLoad->description, description, strlen(description)+1);
-
-    // Options
-    for (int ii = 0; ii < OPTIONCOUNT; ii++){
-        toLoad->options[ii] = options[ii];
-        if (!strcmp(options[ii].answer, "_")) {
-            // stop loading options
-            toLoad->optionsUsed = ii+1;
-            break;
-        }
-    }
-
-    // Link to list
-    if (!start) {
-        start = toLoad;
-    } else {
-        end->next = toLoad;
-        toLoad->prev = end;
-    }
-    end = toLoad;
-    return 0;
-}
-
-/*
-Take in a line (no newline at the end, NULL terminated).
-A line is all three pipe separated strings.
-Parse line into title, description and options.
-Checks that each line has the proper formatting.
-Load prompt.
-*/
-int parseLine(char *line) {
-    char title[80];
-    char *description;
-    Option options[OPTIONCOUNT];
-
-    const char *delim = "|";
-    char *token = strtok(line, delim);
-    int ii = 0;
-
-    while (token) {
-        if (ii == 0) {
-            // Title
-            int lenTok = strlen(token);
-            if (lenTok > 79) {
-                strncpy(title, token, 79);
-                title[79] = '\0';
-            } else {
-                strncpy(title, token, strlen(token)+1);
-            }
-        } else if (ii == 1) {
-            // Description
-            description = token;
-        } else if (ii == 2) {
-            // Options
-            // Parse token
-            if (parseOptions(token, options)) {
-                return -1;
-            }
-        }
-        // Retrieve next token
-        token = strtok(NULL, delim);
-        ii++;
-    }
-
-    if (loadPrompt(title, description, options)) {
-        return -1;
-    }
-    return 0;
-}
-
-int parseOptions(char *line, Option *options) {
-    // delimits set to ';' and '='
-    const char *delim = ";=";
-    char *token = strtok(line, delim);
-    int ii = 0;
-    
-    while (token) {
-        if (ii >= OPTIONCOUNT) {
-            puts("!! Too Many Options !!");
-            return -1;
-        }
-
-        // Answer
-        strncpy(options[ii].answer, token, strlen(token)+1);
-        token = strtok(NULL, delim);
-
-        // GoToTitle
-        strncpy(options[ii].goToTitle, token, strlen(token)+1);
-        token = strtok(NULL, delim);
-        ii++;
-    }
     return 0;
 }
 
@@ -291,41 +337,9 @@ int beginGame() {
 }
 
 /*
-Loop through prompt DLL to find the prompt with matching title.
-Return prompt (NULL if none found).
+Quit the game.
+Handle error status.
 */
-Prompt *getPrompt(const char *title) {
-    Prompt *match = NULL;
-    Prompt *cur = start;
-    while (cur) {
-        if (!strcmp(cur->title, title)) {
-            // found same title
-            match = cur;
-        }
-        cur = cur->next;
-    }
-    return match;
-}
-
-/*
-Receive user's input and copy it into dest.
-Return status.
-*/
-int userInput(char *dest, FILE *fp) {
-    // read in string
-    char buffer[1000];
-    int testEOF = scanf("%999[^\n\r]s", buffer);
-    clearStream(fp);
-    if (testEOF <= 0) {
-        return -1;
-    }
-    int lenBuffer = strlen(buffer);
-    buffer[lenBuffer+1] = '\0';
-    strncpy(dest, buffer, lenBuffer+1);
-    return 0;
-}
-
-
 int quit(int status) {
     // free prompts
     freePTDoublyLinkedList();
@@ -334,4 +348,3 @@ int quit(int status) {
     }
     return status;
 }
-
