@@ -25,7 +25,7 @@ typedef struct PROMPT {
     struct PROMPT *prev;
 }Prompt;
 
-int loadPrompts();
+int readCSV();
 int beginGame();
 int quit(int);
 

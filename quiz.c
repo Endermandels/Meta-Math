@@ -14,15 +14,20 @@ NOTES:
 #include <stdlib.h>
 #include <string.h>
 #include "quiz.h"
-#define DEBUG 0
+#define DEBUG 1
+
+// Quiz File Pointer
+FILE *q1 = NULL;
+char *q1filename = "./GameFiles/Quiz1.csv";
 
 // Prompt Doubly Linked List
 Prompt *start = NULL;
 Prompt *end = NULL;
 
+// Function Prototypes
 void dputs(const char*);
 void clearStream(FILE*);
-int loadPrompts();
+int readCSV();
 int loadPrompt(char*, char*, Option*);
 int parseLine(char*);
 int parseOptions(char*, Option*);
@@ -244,50 +249,77 @@ int parseLine(char *line) {
 /*
 TODO: Description
 */
-int loadPrompts() {
+int readCSV() {
     // TODO: Implement File Reading
 
-    char *str = "Intro|Welcome to Meta Math Quiz.  This quiz will help you in your journey to learn how to do basic mathematical operations such as addition, subtraction, multiplication, division, raising to an exponent, taking a natural logarithm, taking a derivative, taking your sanity, taking an integral, and taking a square-root.  Fully simplify each of your answers, otherwise I will not accept your answers.  This course will be divided into three sections: Basic Math, Slightly Less Basic Math, and Basic Math for an Intelligent Computer Program.  Your results will be recorded.  Do NOT tamper with them.\n\nLet us begin.|_=Q1";
-    char *malStr = NULL;
-    malStr = (char*)malloc(sizeof(char)*(strlen(str)+1));
-    if (!malStr) {
-        puts("!!! Failed to Allocate Memory !!!");
+    // Open file
+    FILE *fp = fopen(q1filename, "r");
+    if (!fp) {
+        puts("! File Not Found !");
         return -1;
     }
-    strncpy(malStr, str, strlen(str)+1);
-    if (parseLine(malStr)) {
-        free(malStr);
-        return -1;
-    }
-    free(malStr);
+    q1 = fp;
 
-    str = "Q1|What is 1+1?|2=Q2;_=TryAgain";
-    malStr = NULL;
-    malStr = (char*)malloc(sizeof(char)*(strlen(str)+1));
-    if (!malStr) {
-        puts("!!! Failed to Allocate Memory !!!");
-        return -1;
-    }
-    strncpy(malStr, str, strlen(str)+1);
-    if (parseLine(malStr)) {
-        free(malStr);
-        return -1;
-    }
-    free(malStr);
+    // Read in line by line
+    // Store each buffer in a dynamically allocated string until three "|"s have been recorded.
+    int MAX_LEN = 512;
+    int lenSoFar = 0;
+    int currentLineSize = MAX_LEN;
+    char *line = NULL;
+    line = (char*)malloc(MAX_LEN*sizeof(char));
+    line[0] = '\0';
+    char buffer[MAX_LEN];
+    short pipeCount = 0;
 
-    str = "Q2|What is 3+26?|29=Q3;_=TryAgain";
-    malStr = NULL;
-    malStr = (char*)malloc(sizeof(char)*(strlen(str)+1));
-    if (!malStr) {
-        puts("!!! Failed to Allocate Memory !!!");
-        return -1;
+    while (fgets(buffer, MAX_LEN, q1)) {
+        dputs(buffer);      // TODO: Delete
+
+        // Count pipes
+        char *pipes = strstr(buffer, "|");
+        while (pipes) {
+            pipeCount++;
+            pipes = strstr(pipes+1, "|");
+        }
+        printf("Pipe Count: %d\n", pipeCount);
+
+        // Remove newline if 2 pipes accounted for
+        int nl = strlen(buffer) - 1;
+        lenSoFar += nl+2;
+        if (pipeCount == 2 && buffer[nl] == '\n') {
+            buffer[nl] = '\0';
+        }
+
+        // Double line's size
+        if (lenSoFar > currentLineSize){
+            printf("LenSoFar: %d\n", lenSoFar);
+            char *tempLine = (char*)realloc(line, currentLineSize*2);
+            if (!tempLine) {
+                free(line);
+                puts("!!! Failed to Allocate Memory !!!");
+                return -1;
+            }
+            line = tempLine;
+            currentLineSize *= 2;
+        }
+
+        printf("Buffer Length: %d\n", nl+1);
+        // Concatonate buffer to line
+        strcat(line, buffer);
+
+        // Parse line
+        if (pipeCount == 2) {
+            dputs(line);        // TODO: Delete
+            if (parseLine(line)) {
+                free(line);
+                return -1;
+            }
+            line[0] = '\0';
+            pipeCount = 0;
+            lenSoFar = 0;
+        }
     }
-    strncpy(malStr, str, strlen(str)+1);
-    if (parseLine(malStr)) {
-        free(malStr);
-        return -1;
-    }
-    free(malStr);
+
+    free(line);
     return 0;
 }
 
@@ -338,11 +370,16 @@ int beginGame() {
 
 /*
 Quit the game.
+Free DLL.
+Close any possibly open files.
 Handle error status.
 */
 int quit(int status) {
     // free prompts
     freePTDoublyLinkedList();
+    if (q1) {
+        fclose(q1);
+    }
     if (status) {
         exit(status);
     }
