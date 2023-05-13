@@ -248,11 +248,10 @@ int parseLine(char *line) {
 }
 
 /*
-TODO: Description
+Read a CSV formatted for this game.
+Feed in appropriate pipe separated values into the parseLine function.
 */
 int readCSV() {
-    // TODO: Implement File Reading
-
     // Open file
     FILE *fp = fopen(q1filename, "r");
     if (!fp) {
@@ -266,9 +265,15 @@ int readCSV() {
     int MAX_LEN = 512;
     int lenSoFar = 0;
     int currentLineSize = MAX_LEN;
+
     char *line = NULL;
     line = (char*)malloc(MAX_LEN*sizeof(char));
+    if (!line) {
+        puts("!!! Failed to Allocate Memory !!!");
+        return -1;
+    }
     line[0] = '\0';
+    
     char buffer[MAX_LEN];
     short pipeCount = 0;
 
@@ -280,17 +285,9 @@ int readCSV() {
             pipes = strstr(pipes+1, "|");
         }
 
-        // Remove newline if 2 pipes accounted for
+        // Double line's size
         int nl = strlen(buffer) - 1;
         lenSoFar += nl+2;
-        if (pipeCount == 2 && buffer[nl] == '\n') {
-            buffer[nl] = '\0';
-        }
-        if (pipeCount == 2 && buffer[nl-1] == '\r') {
-            buffer[nl-1] = '\0';
-        }
-
-        // Double line's size
         if (lenSoFar > currentLineSize){
             char *tempLine = (char*)realloc(line, currentLineSize*2);
             if (!tempLine) {
@@ -302,18 +299,29 @@ int readCSV() {
             currentLineSize *= 2;
         }
 
-        // Concatonate buffer to line
-        strcat(line, buffer);
+        // Check for sufficient pipe count
+        if (pipeCount == 2){
+            if (buffer[nl] == '\n') {
+                buffer[nl] = '\0';
+                if (buffer[nl-1] == '\r') {
+                    buffer[nl-1] = '\0';
+                }
+                dputs(line);
 
-        // Parse line
-        if (pipeCount == 2) {
-            if (parseLine(line)) {
-                free(line);
-                return -1;
+                strcat(line, buffer);
+                // Parse line
+                if (parseLine(line)) {
+                    free(line);
+                    return -1;
+                }
+                line[0] = '\0';
+                pipeCount = 0;
+                lenSoFar = 0;
+            } else {
+                strcat(line, buffer);
             }
-            line[0] = '\0';
-            pipeCount = 0;
-            lenSoFar = 0;
+        } else {
+            strcat(line, buffer);
         }
     }
 

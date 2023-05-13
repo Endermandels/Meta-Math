@@ -9,7 +9,7 @@ TODO: Description
 #ifndef QUIZ
 #define QUIZ
 
-#define OPTIONCOUNT 4
+#define OPTIONCOUNT 8
 
 typedef struct OPTION {
     char answer[50];
