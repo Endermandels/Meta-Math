@@ -14,7 +14,7 @@ NOTES:
 #include <stdlib.h>
 #include <string.h>
 #include "quiz.h"
-#define DEBUG 1
+#define DEBUG 0
 
 // Quiz File Pointer
 FILE *q1 = NULL;
@@ -25,6 +25,7 @@ Prompt *start = NULL;
 Prompt *end = NULL;
 
 // Function Prototypes
+
 void dputs(const char*);
 void clearStream(FILE*);
 int readCSV();
@@ -33,7 +34,7 @@ int parseLine(char*);
 int parseOptions(char*, Option*);
 int parseOptionEquation(char*, Option*, int);
 int beginGame();
-Prompt *getPrompt(const char*);
+Prompt *getPrompt(char*);
 int userInput(char*, FILE*);
 int quit(int);
 
@@ -111,7 +112,7 @@ Loop through prompt DLL to find the prompt with matching title.
 
 @return matching prompt or NULL
 */
-Prompt *getPrompt(const char *title) {
+Prompt *getPrompt(char *title) {
     Prompt *match = NULL;
     Prompt *cur = start;
     while (cur) {
@@ -272,15 +273,12 @@ int readCSV() {
     short pipeCount = 0;
 
     while (fgets(buffer, MAX_LEN, q1)) {
-        dputs(buffer);      // TODO: Delete
-
         // Count pipes
         char *pipes = strstr(buffer, "|");
         while (pipes) {
             pipeCount++;
             pipes = strstr(pipes+1, "|");
         }
-        printf("Pipe Count: %d\n", pipeCount);
 
         // Remove newline if 2 pipes accounted for
         int nl = strlen(buffer) - 1;
@@ -288,10 +286,12 @@ int readCSV() {
         if (pipeCount == 2 && buffer[nl] == '\n') {
             buffer[nl] = '\0';
         }
+        if (pipeCount == 2 && buffer[nl-1] == '\r') {
+            buffer[nl-1] = '\0';
+        }
 
         // Double line's size
         if (lenSoFar > currentLineSize){
-            printf("LenSoFar: %d\n", lenSoFar);
             char *tempLine = (char*)realloc(line, currentLineSize*2);
             if (!tempLine) {
                 free(line);
@@ -302,13 +302,11 @@ int readCSV() {
             currentLineSize *= 2;
         }
 
-        printf("Buffer Length: %d\n", nl+1);
         // Concatonate buffer to line
         strcat(line, buffer);
 
         // Parse line
         if (pipeCount == 2) {
-            dputs(line);        // TODO: Delete
             if (parseLine(line)) {
                 free(line);
                 return -1;
@@ -320,6 +318,8 @@ int readCSV() {
     }
 
     free(line);
+    fclose(q1);
+    q1 = NULL;
     return 0;
 }
 
