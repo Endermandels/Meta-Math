@@ -9,4 +9,4 @@ Q5|In the equation x^2 = 9, what is x equal to?|3=Q6;_=TODO
 Q6|In the equation ln(x) = e^2, what is x equal to?|e^(e^2)=Q7;_=TODO
 Q7|What is the derivative of (x^2)/2?|x=Q8;_=TODO
 Q8|What is the integral of 1/x?|ln(x)+C=Q9;ln(x)+c=Q9;_=TODO
-Q8|Final question: What is the integral of the derivative of 2x + sqrt(31x^100)?|2x+sqrt(31x^100)=END;_=TODO
+Q9|Final question: What is the integral of the derivative of 2x + sqrt(31x^100)?|2x+sqrt(31x^100)=END;_=TODO
