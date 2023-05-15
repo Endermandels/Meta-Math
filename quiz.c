@@ -342,31 +342,42 @@ int beginGame() {
     Prompt *cur = getPrompt(goToTitle);
 
     while (cur) {
-        // Description
-        puts(cur->description);
-        // Answer
-        if (!strcmp(cur->options[0].answer, "_")) {
-            // No answer required
-            strncpy(goToTitle, cur->options[0].goToTitle, strlen(cur->options[0].goToTitle)+1);
-            clearStream(stdin);
-        } else {
-            char answer[1000];
-            int testEOF = userInput(answer, stdin);
-            while (testEOF) {
-                puts("! Invalid Answer !");
-                testEOF = userInput(answer, stdin);
-            }
-            // Options
+        // State
+        if (cur->title[0] == '?') {
             for (int ii = 0; ii < cur->optionsUsed; ii++) {
-                if (!strcmp(cur->options[ii].answer, "_")) {
-                    // End of options
+                if (!strcmp(cur->description, cur->options[ii].answer)) {
+                    // State match
                     strncpy(goToTitle, cur->options[ii].goToTitle, strlen(cur->options[ii].goToTitle)+1);
                     break;
                 }
-                if (!strcmp(cur->options[ii].answer, answer)) {
-                    // User answer matches one of the options
-                    strncpy(goToTitle, cur->options[ii].goToTitle, strlen(cur->options[ii].goToTitle)+1);
-                    break;
+            }
+        } else {
+            // Description
+            puts(cur->description);
+            // Answer
+            if (!strcmp(cur->options[0].answer, "_")) {
+                // No answer required
+                strncpy(goToTitle, cur->options[0].goToTitle, strlen(cur->options[0].goToTitle)+1);
+                clearStream(stdin);
+            } else {
+                char answer[1000];
+                int testEOF = userInput(answer, stdin);
+                while (testEOF) {
+                    puts("! Invalid Answer !");
+                    testEOF = userInput(answer, stdin);
+                }
+                // Options
+                for (int ii = 0; ii < cur->optionsUsed; ii++) {
+                    if (!strcmp(cur->options[ii].answer, "_")) {
+                        // End of options
+                        strncpy(goToTitle, cur->options[ii].goToTitle, strlen(cur->options[ii].goToTitle)+1);
+                        break;
+                    }
+                    if (!strcmp(cur->options[ii].answer, answer)) {
+                        // User answer matches one of the options
+                        strncpy(goToTitle, cur->options[ii].goToTitle, strlen(cur->options[ii].goToTitle)+1);
+                        break;
+                    }
                 }
             }
         }
