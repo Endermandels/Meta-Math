@@ -25,6 +25,21 @@ The math quiz should act like a Choose Your Own Adventure Story with multiple
     depending on which paths were used.
 The game should have functionality which handles the player changing the Game Files.
 
+#### Endings
+
+TODO: Make secret some of the endings.
+
+NOTE: Developer View!
+
+- Competence    (CMP)
+    Player correctly answered all questions first time.
+- Incompetence  (INC)
+    Player answered at least one question incorrect at some point in time.
+- Retard        (RET)
+    Player answered all MDM questions incorrectly.
+- Error         (ERR)
+    Player changed the game files or somehow made an illegal game state.
+
 ### TODOS
 
 Each TODO item should be formatted like so:
@@ -67,3 +82,8 @@ This ending is achieved when the player incorrectly answers
 
 Automatically save the game every time the player answers a
     question.
+
+- Add Path Memory: Elijah
+
+Game remembers the player's choices.
+Helps with deciding which ending to go to.

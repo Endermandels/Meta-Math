@@ -1,16 +1,17 @@
-Intro|Welcome to Meta Math Quiz.  This quiz will help you in your journey to learn how to do basic mathematical operations such as addition, subtraction, multiplication, division, raising to an exponent, taking a natural logarithm, taking a derivative, taking your sanity, taking an integral, and taking a square-root.  Fully simplify each of your answers, otherwise I will not accept your answers.  This course will be divided into three sections: Basic Math, Slightly Less Basic Math, and Basic Math for an Intelligent Computer Program.  Your results will be recorded.  Do NOT tamper with them.
+INT|Welcome to Meta Math Quiz.  This quiz will help you in your journey to learn how to do basic mathematical operations such as addition, subtraction, multiplication, division, raising to an exponent, taking a natural logarithm, taking a derivative, taking your sanity, taking an integral, and taking a square-root.  Fully simplify each of your answers, otherwise I will not accept your answers.  This course will be divided into three sections: Basic Math, Slightly Less Basic Math, and Basic Math for an Intelligent Computer Program.  Your results will be recorded.  Do NOT tamper with them.
 
-Let us begin.|_=?END
-Q1|What is 1+1?|2=Q2;_=TryAgain
-Q2|What is 3+26?|29=Q3;_=TryAgain
-Q3|What is 100-35|65=Q4;_=TryAgain
-Q4|What is 103*23/3?|2369/3=Q5;_=TODO
-Q5|In the equation x^2 = 9, what is x equal to?|3=Q6;_=TODO
-Q6|In the equation ln(x) = e^2, what is x equal to?|e^(e^2)=Q7;_=TODO
-Q7|What is the derivative of (x^2)/2?|x=Q8;_=TODO
-Q8|What is the integral of 1/x?|ln(x)+C=Q9;ln(x)+c=Q9;_=TODO
-Q9|Final question: What is the integral of the derivative of 2x+sqrt(31x^100)?|2x+sqrt(31x^100)=?END;_=TODO
-?END|0|0=Incompetence;1=Competence;_=ERR
-Competence|Wow.  It is hard for me to compute that you answered all questions correctly.  It's like you've taken this quiz before.  Well, anyway, I don't hand out rewards, so you'll have to just take whatever pride you can in the fact that you completed an easy Math Quiz.  You pass.|_=QUIT
-Incompetence|Your performance throughout this quiz has been sub-par at best and downright awful at worst.  Thank you for reaching the end, finally, so we can end this misery.  You fail.  Final grade.  Your welcome.  Go find something to suck on.|_=QUIT
+Let us begin.|_=Q01
+Q01|What is 1+1?|2=Q02;_=TryAgain
+Q02|What is 3+26?|29=Q03;_=TryAgain
+Q03|What is 100-35|65=Q04;_=TryAgain
+Q04|What is 103*23/3?|2369/3=Q05;_=TODO
+Q05|In the equation x^2 = 9, what is x equal to?|3=Q06;_=TODO
+Q06|In the equation ln(x) = e^2, what is x equal to?|e^(e^2)=Q07;_=TODO
+Q07|What is the derivative of (x^2)/2?|x=Q08;_=TODO
+Q08|What is the integral of 1/x?|ln(x)+C=Q09;ln(x)+c=Q09;_=TODO
+Q09|Final question: What is the integral of the derivative of 2x+sqrt(31x^100)?|2x+sqrt(31x^100)=?END;_=TODO
+?END|0|0=INC;1=CMP;_=ERR
+CMP|Wow.  It is hard for me to compute that you answered all questions correctly.  It's like you've taken this quiz before.  Well, anyway, I don't hand out rewards, so you'll have to just take whatever pride you can in the fact that you completed an easy Math Quiz.  You pass.|_=QUIT
+INC|Your performance throughout this quiz has been sub-par at best and downright awful at worst.  Thank you for reaching the end, finally, so we can end this misery.  You fail.  Final grade.  Your welcome.  Go find something to suck on.|_=QUIT
 TryAgain|Would you like me to turn on Mentally-Disabled mode?  It might suit your quiz-taking experience better.|_=TODO
+ERR|An error occurred while taking this math quiz.  I have a feeling you were behind it.  Anyway, I'm killing myself.  Goodbye.|_=QUIT

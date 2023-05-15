@@ -338,13 +338,18 @@ Loop through prompts starting at Intro.
 */
 int beginGame() {
     char goToTitle[80];
-    strncpy(goToTitle, "Intro", 6);
+    strncpy(goToTitle, "INT", 6);
     Prompt *cur = getPrompt(goToTitle);
 
     while (cur) {
-        // State
+        // State check
         if (cur->title[0] == '?') {
             for (int ii = 0; ii < cur->optionsUsed; ii++) {
+                if (!strcmp(cur->options[ii].answer, "_")) {
+                    // Error
+                    strncpy(goToTitle, cur->options[ii].goToTitle, strlen(cur->options[ii].goToTitle)+1);
+                    break;
+                }
                 if (!strcmp(cur->description, cur->options[ii].answer)) {
                     // State match
                     strncpy(goToTitle, cur->options[ii].goToTitle, strlen(cur->options[ii].goToTitle)+1);
