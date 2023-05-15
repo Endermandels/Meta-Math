@@ -113,4 +113,4 @@ Status: Pending.
 
 Check the lowercase version of the player's answers using tolower()
 
-Status: Started.
+Status: Completed.

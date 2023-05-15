@@ -13,6 +13,7 @@ NOTES:
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "quiz.h"
 #define DEBUG 0
 
@@ -28,14 +29,16 @@ Prompt *end = NULL;
 
 void dputs(const char*);
 void clearStream(FILE*);
-int readCSV();
-int loadPrompt(char*, char*, Option*);
-int parseLine(char*);
-int parseOptions(char*, Option*);
-int parseOptionEquation(char*, Option*, int);
-int beginGame();
-Prompt *getPrompt(char*);
+int lowerAnswer(char*);
 int userInput(char*, FILE*);
+Prompt *freePT(Prompt*);
+void freePTDoublyLinkedList();
+Prompt *getPrompt(char*);
+int loadPrompt(char*, char*, Option*);
+int parseOptions(char*, Option*);
+int parseLine(char*);
+int readCSV();
+int beginGame();
 int quit(int);
 
 /*
@@ -60,6 +63,19 @@ void clearStream(FILE *fp) {
 }
 
 /*
+Change the user's input answer to all lowercase.
+Answer must be null terminated.
+*/
+int lowerAnswer(char *answer) {
+    int ii = 0;
+    while (answer[ii]) {
+        answer[ii] = tolower(answer[ii]);
+        ii++;
+    }
+    return 0;
+}
+
+/*
 Receive user's input and copy it into dest.
 */
 int userInput(char *dest, FILE *fp) {
@@ -72,6 +88,7 @@ int userInput(char *dest, FILE *fp) {
     }
     int lenBuffer = strlen(buffer);
     buffer[lenBuffer+1] = '\0';
+    lowerAnswer(buffer);
     strncpy(dest, buffer, lenBuffer+1);
     return 0;
 }
