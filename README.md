@@ -56,12 +56,14 @@ Each TODO item should be formatted like so:
 
 Check the state of the game to see which path to go on next.
 Incorporate options from CSV file, if possible.
+
 Status: Completed.
 
 - Add Competence Ending:
 
 This ending is achieved when the player correctly answers
     all of the questions the first time around.
+
 Status: Unassigned.
 
 - Add Incompetence Ending:
@@ -69,6 +71,7 @@ Status: Unassigned.
 This ending is achieved when the player answers all of the
     questions, yet either had to redo some of them or
     flat-out got some of them wrong.
+
 Status: Unassigned.
 
 - Add Mentally-Disabled Mode (MDM):
@@ -82,22 +85,26 @@ The AI will also ask the player if they want to turn
 The player can exit MDM only by answering all of the
     questions correctly (or by manipulating the Game
     Files... somehow).
+
 Status: Unassigned.
 
 - Add Retard Ending:
 
 This ending is achieved when the player incorrectly answers
     all of the MDM questions.
+
 Status: Unassigned.
 
 - Add Auto Save:
 
 Automatically save the game every time the player answers a
     question.
+
 Status: Unassigned.
 
 - Add Path Memory: Elijah
 
 Game remembers the player's choices.
 Helps with deciding which ending to go to.
+
 Status: Pending.
