@@ -50,23 +50,23 @@ Player changed the game files or somehow made an illegal game state.
 ### TODOS
 
 Each TODO item should be formatted like so:
-- {TODO}: {Contributer's Name}
+#### {TODO}: {Contributer's Name}
 
-- Create checkState Method: Elijah
+#### Create checkState Method: Elijah
 
 Check the state of the game to see which path to go on next.
 Incorporate options from CSV file, if possible.
 
 Status: Completed.
 
-- Add Competence Ending:
+#### Add Competence Ending:
 
 This ending is achieved when the player correctly answers
     all of the questions the first time around.
 
 Status: Unassigned.
 
-- Add Incompetence Ending:
+#### Add Incompetence Ending:
 
 This ending is achieved when the player answers all of the
     questions, yet either had to redo some of them or
@@ -74,7 +74,7 @@ This ending is achieved when the player answers all of the
 
 Status: Unassigned.
 
-- Add Mentally-Disabled Mode (MDM):
+#### Add Mentally-Disabled Mode (MDM):
 
 When the player gets the first three questions wrong,
     the AI will turn on Mentally Disabled Mode,
@@ -88,29 +88,29 @@ The player can exit MDM only by answering all of the
 
 Status: Unassigned.
 
-- Add Retard Ending:
+#### Add Retard Ending:
 
 This ending is achieved when the player incorrectly answers
     all of the MDM questions.
 
 Status: Unassigned.
 
-- Add Auto Save:
+#### Add Auto Save:
 
 Automatically save the game every time the player answers a
     question.
 
 Status: Unassigned.
 
-- Add Path Memory: Elijah
+#### Add Path Memory: Elijah
 
 Game remembers the player's choices.
 Helps with deciding which ending to go to.
 
 Status: Pending.
 
-- Force Lowercase Answers: Elijah
+#### Force Lowercase Answers: Elijah
 
 Check the lowercase version of the player's answers using tolower()
 
-Status: Pending.
+Status: Started.
