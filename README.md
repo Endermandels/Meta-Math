@@ -108,3 +108,9 @@ Game remembers the player's choices.
 Helps with deciding which ending to go to.
 
 Status: Pending.
+
+- Force Lowercase Answers: Elijah
+
+Check the lowercase version of the player's answers using tolower()
+
+Status: Pending.

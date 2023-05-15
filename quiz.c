@@ -345,13 +345,8 @@ int beginGame() {
         // State check
         if (cur->title[0] == '?') {
             for (int ii = 0; ii < cur->optionsUsed; ii++) {
-                if (!strcmp(cur->options[ii].answer, "_")) {
-                    // Error
-                    strncpy(goToTitle, cur->options[ii].goToTitle, strlen(cur->options[ii].goToTitle)+1);
-                    break;
-                }
-                if (!strcmp(cur->description, cur->options[ii].answer)) {
-                    // State match
+                if (!strcmp(cur->options[ii].answer, "_") || !strcmp(cur->description, cur->options[ii].answer)) {
+                    // either error or state match
                     strncpy(goToTitle, cur->options[ii].goToTitle, strlen(cur->options[ii].goToTitle)+1);
                     break;
                 }
@@ -373,13 +368,8 @@ int beginGame() {
                 }
                 // Options
                 for (int ii = 0; ii < cur->optionsUsed; ii++) {
-                    if (!strcmp(cur->options[ii].answer, "_")) {
-                        // End of options
-                        strncpy(goToTitle, cur->options[ii].goToTitle, strlen(cur->options[ii].goToTitle)+1);
-                        break;
-                    }
-                    if (!strcmp(cur->options[ii].answer, answer)) {
-                        // User answer matches one of the options
+                    if (!strcmp(cur->options[ii].answer, "_") || !strcmp(cur->options[ii].answer, answer)) {
+                        // either end of options or user answer matches
                         strncpy(goToTitle, cur->options[ii].goToTitle, strlen(cur->options[ii].goToTitle)+1);
                         break;
                     }
