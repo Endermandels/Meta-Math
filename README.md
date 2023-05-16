@@ -39,7 +39,7 @@ Player correctly answered all questions first time.
 
 Player answered at least one question incorrect at some point in time.
 
-- Retard        (RET)
+- Neanderthal   (NAD)
 
 Player answered all MDM questions incorrectly.
 
@@ -88,7 +88,7 @@ The player can exit MDM only by answering all of the
 
 Status: Unassigned.
 
-#### Add Retard Ending:
+#### Add Neanderthal Ending:
 
 This ending is achieved when the player incorrectly answers
     all of the MDM questions.
@@ -114,3 +114,9 @@ Status: Pending.
 Check the lowercase version of the player's answers using tolower()
 
 Status: Completed.
+
+#### Malloc Prompt Strings: Elijah
+
+Malloc the Prompt strings to save memory.
+
+Status: Started.

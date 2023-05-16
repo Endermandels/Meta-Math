@@ -103,15 +103,32 @@ Free prompt.
 Prompt* freePT(Prompt *pt) {
     dputs("Freeing Prompt");
     if (pt) {
+        if (pt->title) {
+            dputs("freeing title...");
+            free(pt->title);
+        }
         if (pt->description) {
             dputs("freeing description...");
             free(pt->description);
         }
+        if (pt->options) {
+            dputs("freeing options...");
+            for (int ii = 0; ii < pt->optionsUsed; ii++) {
+                if (pt->options[ii].answer) {
+                    free(pt->options[ii].answer);
+                }
+                if (pt->options[ii].goToTitle) {
+                    free(pt->options[ii].goToTitle);
+                }
+            }
+        }
+        Prompt *next = pt->next;
+        dputs("freeing pt...\n");
+        free(pt);
+        return next;
     }
-    Prompt *next = pt->next;
-    dputs("freeing pt...\n");
-    free(pt);
-    return next;
+    puts("!! Attempt to Free Null Prompt !!");
+    return NULL;
 }
 
 /*
@@ -151,20 +168,28 @@ int loadPrompt(char *title, char *description, Option *options) {
         puts("!!! Failed to Allocate Memory !!!");
         return -1;
     }
+    toLoad->title = NULL;
     toLoad->description = NULL;
     toLoad->next = NULL;
     toLoad->prev = NULL;
 
     // Title
+    int lenTitle = strlen(title) + 1;
+    toLoad->title = (char*)malloc(sizeof(char)*lenTitle);
+    if (!toLoad->title) {
+        puts("!!! Failed to Allocate Memory !!!");
+        return -1;
+    }
     strncpy(toLoad->title, title, strlen(title)+1);
 
     // Description
-    toLoad->description = (char*)malloc(sizeof(char)*(strlen(description)+1));
+    int lenDesc = strlen(description) + 1;
+    toLoad->description = (char*)malloc(sizeof(char)*lenDesc);
     if (!toLoad->description) {
         puts("!!! Failed to Allocate Memory !!!");
         return -1;
     }
-    strncpy(toLoad->description, description, strlen(description)+1);
+    strncpy(toLoad->description, description, lenDesc);
 
     // Options
     for (int ii = 0; ii < OPTIONCOUNT; ii++){
@@ -187,6 +212,17 @@ int loadPrompt(char *title, char *description, Option *options) {
     return 0;
 }
 
+void freeOptions(Option *options) {
+    for (int ii = 0; ii < OPTIONCOUNT; ii++) {
+        if (options[ii].answer) {
+            free(options[ii].answer);
+        }
+        if (options[ii].goToTitle) {
+            free(options[ii].goToTitle);
+        }
+    }
+}
+
 /*
 Parse the third section of the CSV into answer and goToTitle pairs.
 
@@ -205,12 +241,29 @@ int parseOptions(char *line, Option *options) {
             return -1;
         }
 
+        options[ii].answer = NULL;
+        options[ii].goToTitle = NULL;
+
         // Answer
-        strncpy(options[ii].answer, token, strlen(token)+1);
+        int lenAnswer = strlen(token)+1;
+        options[ii].answer = (char*)malloc(sizeof(char)*lenAnswer);
+        if (!options[ii].answer) {
+            puts("!!! Failed to Allocate Memory !!!");
+            freeOptions(options);
+            return -1;
+        }
+        strncpy(options[ii].answer, token, lenAnswer);
         token = strtok(NULL, delim);
 
         // GoToTitle
-        strncpy(options[ii].goToTitle, token, strlen(token)+1);
+        int lenGoTo = strlen(token)+1;
+        options[ii].goToTitle = (char*)malloc(sizeof(char)*lenGoTo);
+        if (!options[ii].goToTitle) {
+            puts("!!! Failed to Allocate Memory !!!");
+            freeOptions(options);
+            return -1;
+        }
+        strncpy(options[ii].goToTitle, token, lenGoTo);
         token = strtok(NULL, delim);
         ii++;
     }
@@ -236,13 +289,8 @@ int parseLine(char *line) {
     while (token && ii < 3) {
         if (ii == 0) {
             // Title
-            int lenTok = strlen(token);
-            if (lenTok > 79) {
-                strncpy(title, token, 79);
-                title[79] = '\0';
-            } else {
-                strncpy(title, token, strlen(token)+1);
-            }
+            strncpy(title, token, 79);
+            title[79] = '\0';
         } else if (ii == 1) {
             // Description
             description = token;
