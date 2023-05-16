@@ -18,7 +18,6 @@ NOTES:
 #define DEBUG 0
 
 // Quiz File Pointer
-FILE *q1 = NULL;
 char *q1filename = "./GameFiles/Quiz1.csv";
 
 // Prompt Doubly Linked List
@@ -34,6 +33,7 @@ int userInput(char*, FILE*);
 Prompt *freePT(Prompt*);
 void freePTDoublyLinkedList();
 Prompt *getPrompt(char*);
+void freeOptions(Option*);
 int loadPrompt(char*, char*, Option*);
 int parseOptions(char*, Option*);
 int parseLine(char*);
@@ -111,15 +111,13 @@ Prompt* freePT(Prompt *pt) {
             dputs("freeing description...");
             free(pt->description);
         }
-        if (pt->options) {
-            dputs("freeing options...");
-            for (int ii = 0; ii < pt->optionsUsed; ii++) {
-                if (pt->options[ii].answer) {
-                    free(pt->options[ii].answer);
-                }
-                if (pt->options[ii].goToTitle) {
-                    free(pt->options[ii].goToTitle);
-                }
+        dputs("freeing options...");
+        for (int ii = 0; ii < pt->optionsUsed; ii++) {
+            if (pt->options[ii].answer) {
+                free(pt->options[ii].answer);
+            }
+            if (pt->options[ii].goToTitle) {
+                free(pt->options[ii].goToTitle);
             }
         }
         Prompt *next = pt->next;
@@ -160,36 +158,34 @@ Prompt *getPrompt(char *title) {
 }
 
 /*
+Free a given option array.
+*/
+void freeOptions(Option *options) {
+    for (int ii = 0; ii < OPTIONCOUNT; ii++) {
+        if (options[ii].answer) {
+            free(options[ii].answer);
+        }
+        if (options[ii].goToTitle) {
+            free(options[ii].goToTitle);
+        }
+    }
+}
+
+/*
 Append a prompt to the DLL given the title, description and options.
 */
 int loadPrompt(char *title, char *description, Option *options) {
-    Prompt *toLoad = (Prompt*)malloc(sizeof(Prompt));
+    Prompt *toLoad = NULL;
+    toLoad = (Prompt*)malloc(sizeof(Prompt));
     if (!toLoad) {
         puts("!!! Failed to Allocate Memory !!!");
+        freeOptions(options);
         return -1;
     }
     toLoad->title = NULL;
     toLoad->description = NULL;
     toLoad->next = NULL;
     toLoad->prev = NULL;
-
-    // Title
-    int lenTitle = strlen(title) + 1;
-    toLoad->title = (char*)malloc(sizeof(char)*lenTitle);
-    if (!toLoad->title) {
-        puts("!!! Failed to Allocate Memory !!!");
-        return -1;
-    }
-    strncpy(toLoad->title, title, strlen(title)+1);
-
-    // Description
-    int lenDesc = strlen(description) + 1;
-    toLoad->description = (char*)malloc(sizeof(char)*lenDesc);
-    if (!toLoad->description) {
-        puts("!!! Failed to Allocate Memory !!!");
-        return -1;
-    }
-    strncpy(toLoad->description, description, lenDesc);
 
     // Options
     for (int ii = 0; ii < OPTIONCOUNT; ii++){
@@ -201,6 +197,26 @@ int loadPrompt(char *title, char *description, Option *options) {
         }
     }
 
+    // Title
+    int lenTitle = strlen(title) + 1;
+    toLoad->title = (char*)malloc(sizeof(char)*lenTitle);
+    if (!toLoad->title) {
+        puts("!!! Failed to Allocate Memory !!!");
+        freePT(toLoad);
+        return -1;
+    }
+    strncpy(toLoad->title, title, lenTitle);
+
+    // Description
+    int lenDesc = strlen(description) + 1;
+    toLoad->description = (char*)malloc(sizeof(char)*lenDesc);
+    if (!toLoad->description) {
+        puts("!!! Failed to Allocate Memory !!!");
+        freePT(toLoad);
+        return -1;
+    }
+    strncpy(toLoad->description, description, lenDesc);
+
     // Link to list
     if (!start) {
         start = toLoad;
@@ -210,17 +226,6 @@ int loadPrompt(char *title, char *description, Option *options) {
     }
     end = toLoad;
     return 0;
-}
-
-void freeOptions(Option *options) {
-    for (int ii = 0; ii < OPTIONCOUNT; ii++) {
-        if (options[ii].answer) {
-            free(options[ii].answer);
-        }
-        if (options[ii].goToTitle) {
-            free(options[ii].goToTitle);
-        }
-    }
 }
 
 /*
@@ -235,21 +240,23 @@ int parseOptions(char *line, Option *options) {
     char *token = strtok(line, delim);
     int ii = 0;
     
+    // initialize all options
+    for (int ii = 0; ii < OPTIONCOUNT; ii++) {
+        options[ii].answer = NULL;
+        options[ii].goToTitle = NULL;
+    }
+
     while (token) {
         if (ii >= OPTIONCOUNT) {
             puts("!! Too Many Options !!");
             return -1;
         }
 
-        options[ii].answer = NULL;
-        options[ii].goToTitle = NULL;
-
         // Answer
         int lenAnswer = strlen(token)+1;
         options[ii].answer = (char*)malloc(sizeof(char)*lenAnswer);
         if (!options[ii].answer) {
             puts("!!! Failed to Allocate Memory !!!");
-            freeOptions(options);
             return -1;
         }
         strncpy(options[ii].answer, token, lenAnswer);
@@ -260,7 +267,6 @@ int parseOptions(char *line, Option *options) {
         options[ii].goToTitle = (char*)malloc(sizeof(char)*lenGoTo);
         if (!options[ii].goToTitle) {
             puts("!!! Failed to Allocate Memory !!!");
-            freeOptions(options);
             return -1;
         }
         strncpy(options[ii].goToTitle, token, lenGoTo);
@@ -298,6 +304,7 @@ int parseLine(char *line) {
             // Options
             // Parse token
             if (parseOptions(token, options)) {
+                freeOptions(options);
                 return -1;
             }
         }
@@ -323,7 +330,6 @@ int readCSV() {
         puts("! File Not Found !");
         return -1;
     }
-    q1 = fp;
 
     // Read in line by line
     // Store each buffer in a dynamically allocated string until three "|"s have been recorded.
@@ -335,6 +341,7 @@ int readCSV() {
     line = (char*)malloc(MAX_LEN*sizeof(char));
     if (!line) {
         puts("!!! Failed to Allocate Memory !!!");
+        fclose(fp);
         return -1;
     }
     line[0] = '\0';
@@ -342,7 +349,7 @@ int readCSV() {
     char buffer[MAX_LEN];
     short pipeCount = 0;
 
-    while (fgets(buffer, MAX_LEN, q1)) {
+    while (fgets(buffer, MAX_LEN, fp)) {
         // Count pipes
         char *pipes = strstr(buffer, "|");
         while (pipes) {
@@ -356,8 +363,9 @@ int readCSV() {
         if (lenSoFar > currentLineSize){
             char *tempLine = (char*)realloc(line, currentLineSize*2);
             if (!tempLine) {
-                free(line);
                 puts("!!! Failed to Allocate Memory !!!");
+                free(line);
+                fclose(fp);
                 return -1;
             }
             line = tempLine;
@@ -377,6 +385,7 @@ int readCSV() {
                 // Parse line
                 if (parseLine(line)) {
                     free(line);
+                    fclose(fp);
                     return -1;
                 }
                 line[0] = '\0';
@@ -391,8 +400,7 @@ int readCSV() {
     }
 
     free(line);
-    fclose(q1);
-    q1 = NULL;
+    fclose(fp);
     return 0;
 }
 
@@ -456,9 +464,6 @@ Handle error status.
 int quit(int status) {
     // free prompts
     freePTDoublyLinkedList();
-    if (q1) {
-        fclose(q1);
-    }
     if (status) {
         exit(status);
     }

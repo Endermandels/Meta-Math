@@ -16,11 +16,11 @@ int main(int argc, char const *argv[])
 {
     if (readCSV()) {
         puts("Error occurred!");
-        quit(1);
+        quit(-1);
     }
     if (beginGame()) {
         puts("Error occurred!");
-        quit(1);
+        quit(-1);
     }
     return quit(0);
 }

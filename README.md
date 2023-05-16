@@ -118,5 +118,6 @@ Status: Completed.
 #### Malloc Prompt Strings: Elijah
 
 Malloc the Prompt strings to save memory.
+Test that program handles malloc errors smoothly.
 
-Status: Started.
+Status: Completed.

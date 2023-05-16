@@ -25,3 +25,6 @@ quiz.o: quiz.c
 
 run: ${EXEC}
 	${GCACHE}/${EXEC}
+
+runv: ${EXEC}
+	valgrind ${GCACHE}/${EXEC}
