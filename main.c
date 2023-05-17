@@ -14,7 +14,7 @@ TODO: Description
 
 int main(int argc, char const *argv[])
 {
-    if (readCSV()) {
+    if (readQuizCSV()) {
         puts("Error occurred!");
         quit(-1);
     }

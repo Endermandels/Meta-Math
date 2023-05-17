@@ -20,6 +20,10 @@ NOTES:
 // Quiz File Pointer
 char *q1filename = "./GameFiles/Quiz1.csv";
 
+// Paths
+char *playerPath = NULL;
+char *possiblePaths = NULL;
+
 // Prompt Doubly Linked List
 Prompt *start = NULL;
 Prompt *end = NULL;
@@ -37,7 +41,7 @@ void freeOptions(Option*);
 int loadPrompt(char*, char*, Option*);
 int parseOptions(char*, Option*);
 int parseLine(char*);
-int readCSV();
+int readQuizCSV();
 int beginGame();
 int quit(int);
 
@@ -125,7 +129,7 @@ Prompt* freePT(Prompt *pt) {
         free(pt);
         return next;
     }
-    puts("!! Attempt to Free Null Prompt !!");
+    puts("!! Attempted to Free Null Prompt !!");
     return NULL;
 }
 
@@ -313,17 +317,14 @@ int parseLine(char *line) {
         ii++;
     }
 
-    if (loadPrompt(title, description, options)) {
-        return -1;
-    }
-    return 0;
+    return loadPrompt(title, description, options);
 }
 
 /*
-Read a CSV formatted for this game.
+Read a Quiz CSV formatted for this game.
 Feed in appropriate pipe separated values into the parseLine function.
 */
-int readCSV() {
+int readQuizCSV() {
     // Open file
     FILE *fp = fopen(q1filename, "r");
     if (!fp) {
@@ -401,11 +402,11 @@ int readCSV() {
 
     free(line);
     fclose(fp);
-    return 0;
+
+    return readPathCSV(playerPath, possiblePaths);
 }
 
 /*
-First run of game.
 Prompts are loaded in by this point.
 Loop through prompts starting at Intro.
 */
@@ -417,6 +418,8 @@ int beginGame() {
     while (cur) {
         // State check
         if (cur->title[0] == '?') {
+            // TODO: Set State
+
             for (int ii = 0; ii < cur->optionsUsed; ii++) {
                 if (!strcmp(cur->options[ii].answer, "_") || !strcmp(cur->description, cur->options[ii].answer)) {
                     // either error or state match

@@ -1,5 +1,5 @@
 EXEC = quiz
-OBJS = main.o quiz.o
+OBJS = main.o quiz.o path.o
 CCFLAGS = gcc -Wall -std=c99 --pedantic
 GCACHE = ./GameCache
 
@@ -22,6 +22,9 @@ main.o: main.c
 
 quiz.o: quiz.c
 	${CCFLAGS} -c quiz.c
+
+path.o: path.c
+	${CCFLAGS} -c path.c
 
 run: ${EXEC}
 	${GCACHE}/${EXEC}

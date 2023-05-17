@@ -9,6 +9,8 @@ TODO: Description
 #ifndef QUIZ
 #define QUIZ
 
+#include "path.h"
+
 #define OPTIONCOUNT 8
 
 typedef struct OPTION {
@@ -25,7 +27,7 @@ typedef struct PROMPT {
     struct PROMPT *prev;
 }Prompt;
 
-int readCSV();
+int readQuizCSV();
 int beginGame();
 int quit(int);
 
