@@ -9,8 +9,6 @@ TODO: Description
 #ifndef QUIZ
 #define QUIZ
 
-#include "path.h"
-
 #define OPTIONCOUNT 8
 
 typedef struct OPTION {

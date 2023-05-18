@@ -15,6 +15,7 @@ NOTES:
 #include <string.h>
 #include <ctype.h>
 #include "quiz.h"
+#include "path.h"
 #define DEBUG 0
 
 // Quiz File Pointer
@@ -403,7 +404,7 @@ int readQuizCSV() {
     free(line);
     fclose(fp);
 
-    return readPathCSV(playerPath, possiblePaths);
+    return readPathCSV(&playerPath, &possiblePaths);
 }
 
 /*
@@ -467,6 +468,13 @@ Handle error status.
 int quit(int status) {
     // free prompts
     freePTDoublyLinkedList();
+    if (playerPath) {
+        puts("freeing player path...");
+        free(playerPath);
+    }
+    if (possiblePaths) {
+        free(possiblePaths);
+    }
     if (status) {
         exit(status);
     }

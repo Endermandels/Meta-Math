@@ -9,6 +9,6 @@ TODO: Description
 #ifndef PATH
 #define PATH
 
-int readPathCSV(char*, char*);
+int readPathCSV(char**, char**);
 
 #endif
