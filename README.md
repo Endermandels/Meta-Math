@@ -95,12 +95,12 @@ This ending is achieved when the player incorrectly answers
 
 Status: Unassigned.
 
-#### Add Auto Save:
+#### Add Auto Save: Joey
 
 Automatically save the game every time the player answers a
     question.
 
-Status: Unassigned.
+Status: Assigned.
 
 #### Add Path Memory: Elijah
 

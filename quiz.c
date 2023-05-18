@@ -23,7 +23,8 @@ char *q1filename = "./GameFiles/Quiz1.csv";
 
 // Paths
 char *playerPath = NULL;
-char *possiblePaths = NULL;
+State *stateStart = NULL;
+State *stateEnd = NULL;
 
 // Prompt Doubly Linked List
 Prompt *start = NULL;
@@ -376,9 +377,11 @@ int readQuizCSV() {
 
         // Check for sufficient pipe count
         if (pipeCount == 2){
-            if (buffer[nl] == '\n') {
+            if (buffer[nl] == '\r') {
                 buffer[nl] = '\0';
-                if (buffer[nl-1] == '\r') {
+            } else if (buffer[nl] == '\n') {
+                buffer[nl] = '\0';
+                if (nl-1 >= 0 && buffer[nl-1] == '\r') {
                     buffer[nl-1] = '\0';
                 }
                 dputs(line);
@@ -404,7 +407,7 @@ int readQuizCSV() {
     free(line);
     fclose(fp);
 
-    return readPathCSV(&playerPath, &possiblePaths);
+    return readPathCSV(&playerPath, &stateStart, &stateEnd);
 }
 
 /*
@@ -468,12 +471,9 @@ Handle error status.
 int quit(int status) {
     // free prompts
     freePTDoublyLinkedList();
+    freeSTDoublyLinkedList(stateStart);
     if (playerPath) {
-        puts("freeing player path...");
         free(playerPath);
-    }
-    if (possiblePaths) {
-        free(possiblePaths);
     }
     if (status) {
         exit(status);

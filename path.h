@@ -9,6 +9,15 @@ TODO: Description
 #ifndef PATH
 #define PATH
 
-int readPathCSV(char**, char**);
+typedef struct STATE {
+    char *title;
+    char *path;
+    char *val;      // value of state if path matches playerPath
+    struct STATE *next;
+    struct STATE *prev;
+}State;
+
+void freeSTDoublyLinkedList(State*);
+int readPathCSV(char**, State**, State**);
 
 #endif
