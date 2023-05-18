@@ -11,14 +11,31 @@ TODO: Description
 #include <string.h>
 #include <ctype.h>
 #include "path.h"
-#include "quiz.h"
+
+char *playerPath = NULL;
 
 char *pathFN = "./GameFiles/Path.txt";
 char *possiblePathsFN = "./GameFiles/PossiblePaths.csv";
 
+State *stateStart = NULL;
+State *stateEnd = NULL;
+
+void savePlayerPath();      // TODO
+State *freeST(State*);
+void freeSTDoublyLinkedList();
+State *getState(char*);
 State *parseState(char*);
-int readPathCSV(char**, State**, State**);
-short checkPathMatch(char*);    // TODO
+int readPathCSV();
+int setState(Prompt*);      // TODO
+
+/*
+TODO
+*/
+void savePlayerPath() {
+    if (playerPath) {
+        free(playerPath);
+    }
+}
 
 /*
 Free state's character arrays.
@@ -54,8 +71,8 @@ State* freeST(State *st) {
 /*
 Free all states in the doubly linked list.
 */
-void freeSTDoublyLinkedList(State *start) {
-    State *cur = start;
+void freeSTDoublyLinkedList() {
+    State *cur = stateStart;
     while (cur) {
         cur = freeST(cur);
     }
@@ -66,9 +83,9 @@ Loop through state DLL to find the state with matching title.
 
 @return matching state or NULL
 */
-State *getState(char *title, State *start) {
+State *getState(char *title) {
     State *match = NULL;
-    State *cur = start;
+    State *cur = stateStart;
     while (cur) {
         if (!strcmp(cur->title, title)) {
             // found same title
@@ -158,7 +175,7 @@ Read the possible paths and record each one in a State struct.
 Possible paths are separated by commas and pipes.
 Both character arrays need to be malloc'd.
 */
-int readPathCSV(char **playerPath, State **start, State **end) {
+int readPathCSV() {
     // Player Path
     FILE *fp = NULL;
     fp = fopen(pathFN, "r");
@@ -189,27 +206,27 @@ int readPathCSV(char **playerPath, State **start, State **end) {
             nl += 2;
 
             // malloc player path
-            if (!(*playerPath)) {
-                *playerPath = (char*)malloc(sizeof(char)*nl);
-                if (!(*playerPath)) {
+            if (!playerPath) {
+                playerPath = (char*)malloc(sizeof(char)*nl);
+                if (!playerPath) {
                     puts("!!! Failed to Allocate Memory !!!");
                     fclose(fp);
                     return -1;
                 }
-                *playerPath[0] = '\0';
+                playerPath[0] = '\0';
             } else {
                 char *temp = NULL;
-                temp = (char*)realloc(*playerPath, sizeof(char)*(strlen(*playerPath)+1+nl));
+                temp = (char*)realloc(playerPath, sizeof(char)*(strlen(playerPath)+1+nl));
                 if (!temp) {
                     puts("!!! Failed to Allocate Memory !!!");
                     fclose(fp);
                     return -1;
                 }
-                *playerPath = temp;
+                playerPath = temp;
             }
 
             // concatenate buffer to player path
-            strcat(*playerPath, buffer);
+            strcat(playerPath, buffer);
         } else {
             puts("!! Invalid Title on Player Path !!");
             fclose(fp);
@@ -253,17 +270,52 @@ int readPathCSV(char **playerPath, State **start, State **end) {
             }
 
             // Add State to DLL
-            if (!(*start)) {
-                *start = toLoad;
+            if (!stateStart) {
+                stateStart = toLoad;
             } else {
-                (*end)->next = toLoad;
-                toLoad->prev = *end;
+                stateEnd->next = toLoad;
+                toLoad->prev = stateEnd;
             }
-            *end = toLoad;
+            stateEnd = toLoad;
         }
     }
 
     fclose(fp);
 
+    return 0;
+}
+
+/*
+Check for State title in DLL that matches Prompt title.
+If the State path matches the player's path,
+    set the Prompt's description to the State's val.
+*/
+int setState(Prompt *pt) {
+    if (!pt) {
+        puts("! NULL Prompt !");
+        return -1;
+    }
+
+    State *cur = stateStart;
+    while (cur) {
+        if (!strcmp(cur->title, pt->title)) {
+            if (!strcmp(cur->path, playerPath)) {
+                // player path equals state path
+                int lenval = strlen(cur->val) + 1;
+                // resize description if need be
+                if (lenval > strlen(pt->description)+1) {
+                    char *temp = (char*)realloc(pt->description, sizeof(char)*lenval);
+                    if (!temp) {
+                        puts("!!! Failed to Allocate Memory !!!");
+                        return -1;
+                    }
+                    pt->description = temp;
+                }
+                strncpy(pt->description, cur->val, lenval);
+                break;
+            }
+        }
+        cur = cur->next;
+    }
     return 0;
 }

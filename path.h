@@ -9,6 +9,8 @@ TODO: Description
 #ifndef PATH
 #define PATH
 
+#include "quiz.h"
+
 typedef struct STATE {
     char *title;
     char *path;
@@ -17,7 +19,9 @@ typedef struct STATE {
     struct STATE *prev;
 }State;
 
-void freeSTDoublyLinkedList(State*);
-int readPathCSV(char**, State**, State**);
+void savePlayerPath();
+void freeSTDoublyLinkedList();
+int readPathCSV();
+int setState(Prompt*);
 
 #endif

@@ -14,7 +14,6 @@ NOTES:
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "quiz.h"
 #include "path.h"
 #define DEBUG 0
 
@@ -22,13 +21,10 @@ NOTES:
 char *q1filename = "./GameFiles/Quiz1.csv";
 
 // Paths
-char *playerPath = NULL;
-State *stateStart = NULL;
-State *stateEnd = NULL;
 
 // Prompt Doubly Linked List
-Prompt *start = NULL;
-Prompt *end = NULL;
+Prompt *promptStart = NULL;
+Prompt *promptEnd = NULL;
 
 // Function Prototypes
 
@@ -139,7 +135,7 @@ Prompt* freePT(Prompt *pt) {
 Free all prompts in the doubly linked list.
 */
 void freePTDoublyLinkedList() {
-    Prompt *cur = start;
+    Prompt *cur = promptStart;
     while (cur) {
         cur = freePT(cur);
     }
@@ -152,7 +148,7 @@ Loop through prompt DLL to find the prompt with matching title.
 */
 Prompt *getPrompt(char *title) {
     Prompt *match = NULL;
-    Prompt *cur = start;
+    Prompt *cur = promptStart;
     while (cur) {
         if (!strcmp(cur->title, title)) {
             // found same title
@@ -224,13 +220,13 @@ int loadPrompt(char *title, char *description, Option *options) {
     strncpy(toLoad->description, description, lenDesc);
 
     // Link to list
-    if (!start) {
-        start = toLoad;
+    if (!promptStart) {
+        promptStart = toLoad;
     } else {
-        end->next = toLoad;
-        toLoad->prev = end;
+        promptEnd->next = toLoad;
+        toLoad->prev = promptEnd;
     }
-    end = toLoad;
+    promptEnd = toLoad;
     return 0;
 }
 
@@ -407,7 +403,7 @@ int readQuizCSV() {
     free(line);
     fclose(fp);
 
-    return readPathCSV(&playerPath, &stateStart, &stateEnd);
+    return readPathCSV();
 }
 
 /*
@@ -422,7 +418,9 @@ int beginGame() {
     while (cur) {
         // State check
         if (cur->title[0] == '?') {
-            // TODO: Set State
+            if (setState(cur)) {
+                return -1;
+            }
 
             for (int ii = 0; ii < cur->optionsUsed; ii++) {
                 if (!strcmp(cur->options[ii].answer, "_") || !strcmp(cur->description, cur->options[ii].answer)) {
@@ -464,17 +462,14 @@ int beginGame() {
 
 /*
 Quit the game.
-Free DLL.
-Close any possibly open files.
+Free allocated memory.
 Handle error status.
 */
 int quit(int status) {
     // free prompts
     freePTDoublyLinkedList();
-    freeSTDoublyLinkedList(stateStart);
-    if (playerPath) {
-        free(playerPath);
-    }
+    freeSTDoublyLinkedList();
+    savePlayerPath();
     if (status) {
         exit(status);
     }
