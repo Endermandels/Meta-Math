@@ -107,7 +107,7 @@ Status: Assigned.
 Game remembers the player's choices.
 Helps with deciding which ending to go to.
 
-Status: Pending.
+Status: Completed.
 
 #### Force Lowercase Answers: Elijah
 
