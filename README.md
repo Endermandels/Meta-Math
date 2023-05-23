@@ -47,6 +47,18 @@ Player answered all MDM questions incorrectly.
 
 Player changed the game files or somehow made an illegal game state.
 
+#### TITLES
+
+NOTE: Developer View!
+
+- Flag          (FLG)
+
+Used for marking the last answer in a sequence correctly.
+
+- Wrong         (WR)
+
+Used for marking an answer as incorrect.
+
 ### TODOS
 
 Each TODO item should be formatted like so:
