@@ -1,17 +1,35 @@
 INT|Welcome to Meta Math Quiz.  This quiz will help you in your journey to learn how to do basic mathematical operations such as addition, subtraction, multiplication, division, raising to an exponent, taking a natural logarithm, taking a derivative, taking your sanity, taking an integral, and taking a square-root.  Fully simplify each of your answers, otherwise I will not accept your answers.  This course will be divided into three sections: Basic Math, Slightly Less Basic Math, and Basic Math for an Intelligent Computer Program.  Your results will be recorded.  Do NOT tamper with them.
 
 Let us begin.|_=Q01
-Q01|What is 1+1?|2=Q02;_=TryAgain
-Q02|What is 3+26?|29=Q03;_=TryAgain
-Q03|What is 100-35|65=Q04;_=TryAgain
+Q01|What is 1+1?|2=Q02;_=WR1
+Q02|What is 3+26?|29=Q03;_=WR2
+Q03|What is 100-35|65=Q04;_=?MDM
 Q04|What is 103*23/3?|2369/3=Q05;_=TODO
 Q05|In the equation x^2 = 9, what is x equal to?|3=Q06;_=TODO
 Q06|In the equation ln(x) = e^2, what is x equal to?|e^(e^2)=Q07;_=TODO
 Q07|What is the derivative of (x^2)/2?|x=Q08;_=TODO
 Q08|What is the integral of 1/x?|ln(x)+C=Q09;ln(x)+c=Q09;_=TODO
-Q09|Final question: What is the integral of the derivative of 2x+sqrt(31x^100)?|2x+sqrt(31x^100)=?END;_=TODO
-?END|0|0=INC;1=CMP;_=ERR
+Q09|Final question: What is the integral of the derivative of 2x+sqrt(31x^100)?|2x+sqrt(31x^100)=FLG1;_=?END
+FLG1|...|_=?END
 CMP|Wow.  It is hard for me to compute that you answered all questions correctly.  It's like you've taken this quiz before.  Well, anyway, I don't hand out rewards, so you'll have to just take whatever pride you can in the fact that you completed an easy Math Quiz.  You pass.|_=QUIT
 INC|Your performance throughout this quiz has been sub-par at best and downright awful at worst.  Thank you for reaching the end, finally, so we can end this misery.  You fail.  Final grade.  Your welcome.  Go find something to suck on.|_=QUIT
-TryAgain|Would you like me to turn on Mentally-Disabled mode?  It might suit your quiz-taking experience better.|_=TODO
-ERR|An error occurred while taking this math quiz.  I have a feeling you were behind it.  Anyway, I'm killing myself.  Goodbye.|_=QUIT
+WR1|Would you like me to turn on Mentally-Disabled mode (Y/N)?  It might suit your quiz-taking experience better.|n=Q02;_=?MDM
+WR2|Would you like me to turn on Mentally-Disabled mode (Y/N)?  It might suit your quiz-taking experience better.|n=Q03;_=?MDM
+MDM|Thank you for your valuable input.  The rate and quality of your answers seem to indicate that the size of your brain is more like that of a goldfish.  This will help me in determining these set of problems tailored for your intellect.  Oops.  I forgot.  I'm talking to a troglodyte.  Let me alter my speech settings....  Hold on....  Almost finished....
+
+Done.
+Speech changed.
+You ready for more asking?|_=Q10
+Q10|Take 2 rocks.  How many rocks you have?|2=Q11;_=WR3
+Q11|Take 1 rock.  Take another rock.  How many rocks you have?|2=Q12;_=WR4
+Q12|Take 2 rocks.  Throw one rock.  How many rocks you have?|1=FLG2;_=?MDM
+FLG2|...|_=?MDM
+NEA|You dumber than rocks.
+You fail.|_=QUIT
+WR3|Bad.
+Do better.|_=Q11
+WR4|Bad.
+Do better.|_=Q12
+?END|0|0=INC;1=CMP;_=ERR
+?MDM|0|0=Q04;1=MDM;2=NEA;_=ERR
+ERR|An error occurred while taking this math quiz.  I have a feeling you were behind it.  Anyway, I'm going to leave now.  Goodbye.|_=QUIT

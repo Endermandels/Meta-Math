@@ -86,14 +86,14 @@ The player can exit MDM only by answering all of the
     questions correctly (or by manipulating the Game
     Files... somehow).
 
-Status: Pending
+Status: Completed
 
 #### Add Neanderthal Ending: Elijah
 
 This ending is achieved when the player incorrectly answers
     all of the MDM questions.
 
-Status: Pending
+Status: Completed
 
 #### Add Auto Save: Joey
 
@@ -125,5 +125,13 @@ Status: Completed
 #### Brainstorm Game File Altering Path:
 
 Brainstorm a path wherein the player alters the game files somehow.
+
+Status: Unassigned
+
+#### Brainstorm Better State Checking:
+
+Currently, the state checking requires that the full player path matches
+    the state path.
+This method is cumbersome and can be improved.
 
 Status: Unassigned
