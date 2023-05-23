@@ -39,7 +39,7 @@ Player correctly answered all questions first time.
 
 Player answered at least one question incorrect at some point in time.
 
-- Neanderthal   (NAD)
+- Neanderthal   (NEA)
 
 Player answered all MDM questions incorrectly.
 
