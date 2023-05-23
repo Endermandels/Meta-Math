@@ -74,7 +74,7 @@ This ending is achieved when the player answers all of the
 
 Status: Completed.
 
-#### Add Mentally-Disabled Mode (MDM):
+#### Add Mentally-Disabled Mode (MDM): Elijah
 
 When the player gets the first three questions wrong,
     the AI will turn on Mentally Disabled Mode,
@@ -86,14 +86,14 @@ The player can exit MDM only by answering all of the
     questions correctly (or by manipulating the Game
     Files... somehow).
 
-Status: Unassigned.
+Status: Pending.
 
-#### Add Neanderthal Ending:
+#### Add Neanderthal Ending: Elijah
 
 This ending is achieved when the player incorrectly answers
     all of the MDM questions.
 
-Status: Unassigned.
+Status: Pending.
 
 #### Add Auto Save: Joey
 
