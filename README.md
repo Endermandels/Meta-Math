@@ -77,10 +77,10 @@ Brainstorm a path wherein the player alters the game files somehow.
 
 Status: Unassigned
 
-#### Brainstorm Better State Checking:
+#### Brainstorm Better State Checking: Elijah
 
 Currently, the state checking requires that the full player path matches
     the state path.
 This method is cumbersome and can be improved.
 
-Status: Unassigned
+Status: Pending
