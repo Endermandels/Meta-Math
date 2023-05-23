@@ -59,20 +59,20 @@ Incorporate options from CSV file, if possible.
 
 Status: Completed.
 
-#### Add Competence Ending:
+#### Add Competence Ending: Elijah
 
 This ending is achieved when the player correctly answers
     all of the questions the first time around.
 
-Status: Unassigned.
+Status: Completed.
 
-#### Add Incompetence Ending:
+#### Add Incompetence Ending: Elijah
 
 This ending is achieved when the player answers all of the
     questions, yet either had to redo some of them or
     flat-out got some of them wrong.
 
-Status: Unassigned.
+Status: Completed.
 
 #### Add Mentally-Disabled Mode (MDM):
 
