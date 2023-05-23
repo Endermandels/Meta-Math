@@ -57,14 +57,14 @@ Each TODO item should be formatted like so:
 Check the state of the game to see which path to go on next.
 Incorporate options from CSV file, if possible.
 
-Status: Completed.
+Status: Completed
 
 #### Add Competence Ending: Elijah
 
 This ending is achieved when the player correctly answers
     all of the questions the first time around.
 
-Status: Completed.
+Status: Completed
 
 #### Add Incompetence Ending: Elijah
 
@@ -72,7 +72,7 @@ This ending is achieved when the player answers all of the
     questions, yet either had to redo some of them or
     flat-out got some of them wrong.
 
-Status: Completed.
+Status: Completed
 
 #### Add Mentally-Disabled Mode (MDM): Elijah
 
@@ -86,38 +86,44 @@ The player can exit MDM only by answering all of the
     questions correctly (or by manipulating the Game
     Files... somehow).
 
-Status: Pending.
+Status: Pending
 
 #### Add Neanderthal Ending: Elijah
 
 This ending is achieved when the player incorrectly answers
     all of the MDM questions.
 
-Status: Pending.
+Status: Pending
 
 #### Add Auto Save: Joey
 
 Automatically save the game every time the player answers a
     question.
 
-Status: Assigned.
+Status: Assigned
 
 #### Add Path Memory: Elijah
 
 Game remembers the player's choices.
 Helps with deciding which ending to go to.
 
-Status: Completed.
+Status: Completed
 
 #### Force Lowercase Answers: Elijah
 
 Check the lowercase version of the player's answers using tolower()
 
-Status: Completed.
+Status: Completed
 
 #### Malloc Prompt Strings: Elijah
 
 Malloc the Prompt strings to save memory.
 Test that program handles malloc errors smoothly.
 
-Status: Completed.
+Status: Completed
+
+#### Brainstorm Game File Altering Path:
+
+Brainstorm a path wherein the player alters the game files somehow.
+
+Status: Unassigned
