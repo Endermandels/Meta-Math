@@ -88,13 +88,6 @@ The player can exit MDM only by answering all of the
 
 Status: Unassigned.
 
-- Add Retard Ending:
-
-This ending is achieved when the player incorrectly answers
-    all of the MDM questions.
-
-Status: Unassigned.
-
 - Add Auto Save:
 
 Automatically save the game every time the player answers a
